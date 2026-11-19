@@ -1,0 +1,47 @@
+Table users {
+  id integer [pk, increment]
+  email text [not null, unique]
+  password_hash text [not null]
+  full_name text [not null]
+  role text [not null, default: 'user', note: 'admin | user']
+  is_active boolean [not null, default: true]
+  created_at text [not null, default: `datetime('now')`]
+}
+
+Table projects {
+  id integer [pk, increment]
+  name text [not null]
+  description text
+  owner_id integer [not null, ref: > users.id]
+  created_at text [not null, default: `datetime('now')`]
+  updated_at text [not null, default: `datetime('now')`]
+}
+
+Table project_members {
+  project_id integer [not null, ref: > projects.id]
+  user_id integer [not null, ref: > users.id]
+  indexes {
+    (project_id, user_id) [pk]
+  }
+}
+
+Table tasks {
+  id integer [pk, increment]
+  project_id integer [not null, ref: > projects.id]
+  title text [not null]
+  description text
+  status text [not null, default: 'todo', note: 'todo | in_progress | done']
+  priority text [not null, default: 'medium', note: 'low | medium | high']
+  assignee_id integer [ref: > users.id]
+  due_date text
+  created_at text [not null, default: `datetime('now')`]
+  updated_at text [not null, default: `datetime('now')`]
+}
+
+Table comments {
+  id integer [pk, increment]
+  task_id integer [not null, ref: > tasks.id]
+  author_id integer [not null, ref: > users.id]
+  body text [not null]
+  created_at text [not null, default: `datetime('now')`]
+}
